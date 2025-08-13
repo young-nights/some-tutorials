@@ -1,0 +1,22 @@
+
+# 导入Python标准库os，用于操作文件和目录
+import os
+# 导入rtconfig模块，包含RT-Thread的配置
+import rtconfig
+# 导入building模块，包含构建相关的函数和类
+from building import *
+# 创建一个空列表 objs，用于存储后续收集到的对象或编译目标等。
+objs = []
+# 获取当前目录，并将其存储在变量 cwd 中。这个函数可能来自于 building 模块，用于确定构建脚本所在的目录。
+cwd = GetCurrentDir()
+# 遍历当前目录下的所有文件和子目录，每个文件或目录的名称存储在变量 d 中
+for d in os.listdir(cwd):
+    # 将当前目录 cwd 与当前遍历到的名称 d 拼接成完整的路径，存储在变量 path 中，这样可以得到每个文件或文件夹的绝对路径
+    path = os.path.join(cwd, d)
+    # 使用 os.path.isfile() 检查在路径 path 下是否存在名为 “SConscript” 的文件
+    # os.path.join(path, "SConscript") 将 path 和 “SConscript” 拼接成完整的文件路径，用于判断该文件是否存在。如果存在，则执行后续的代码块
+    if os.path.isfile(os.path.join(path, "SConscript")):
+        objs += SConscript(os.path.join(d, "SConscript"), variant_dir="#/build/" + d, duplicate=0)
+
+# 调用 Return() 函数，将变量 objs 作为参数传递并返回。这个函数可能用于在构建系统中向上层传递构建结果或对象集合，以便后续的构建步骤可以使用这些对象进行进一步的构建操作，如编译、链接等。
+Return("objs")

@@ -1,0 +1,9 @@
+
+
+# 在 Kconfig 文件中，orsource 是一个指令，用于引入其他 Kconfig 文件,
+# 它的作用是将指定路径下的 Kconfig 文件的内容合并到当前的配置中,
+# 这允许开发者将配置选项分散到多个文件中，便于管理和维护。
+
+orsource "rt-thread/Kconfig"
+orsource "packages/Kconfig"
+orsource "platform/Kconfig"

@@ -1,0 +1,18 @@
+# .gitattributes for packages.
+
+# Handle line endings automatically for files detected as text
+# and leave all files detected as binary untouched.
+# ============
+
+
+# 对于所有文件，Git 会自动检测文件类型（文本文件或二进制文件）
+# 对于检测为文本的文件，会自动进行换行符转换
+# 具体来说，当文本文件被添加到 Git 仓库时，其换行符会被规范化为 LF（Line Feed，换行）格式存储在仓库中；
+# 当文件从仓库检出到工作目录时，根据 eol 属性、Git 配置以及平台的不同，可能会将 LF 转换为 CRLF（Carriage Return and Line Feed，回车换行）
+* text=auto
+
+# 于文件 Kconfig，明确指定其为文本文件，并且在工作目录中始终使用 LF 作为换行符
+Kconfig text eol=lf
+
+# 对于所有 .json 文件，明确指定其为文本文件，并且在工作目录中始终使用 LF 作为换行符
+*.json  text eol=lf

@@ -1,0 +1,21 @@
+
+# 导入Python标准库os，用于操作文件和目录
+import os
+# 导入rtt相关配置组件
+import rtconfig
+# 从 building 模块中导入所有内容
+from building import *
+
+
+# 一个空列表，用于存储所有子目录中的构建目标
+objs = []
+# 当前工作目录的路径，通过调用 GetCurrentDir() 函数获取
+cwd = GetCurrentDir()
+
+
+for d in os.listdir(cwd):
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, "SConscript")):
+        objs += SConscript(os.path.join(d, "SConscript"))
+
+Return("objs")

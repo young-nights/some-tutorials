@@ -1,0 +1,3 @@
+I:/GitHub/some_tutorials/DemoProject/CLION_RTTHREAD/bsp/remote_ctrl_project/build/CMakeFiles/rtthread.elf.dir
+I:/GitHub/some_tutorials/DemoProject/CLION_RTTHREAD/bsp/remote_ctrl_project/build/CMakeFiles/edit_cache.dir
+I:/GitHub/some_tutorials/DemoProject/CLION_RTTHREAD/bsp/remote_ctrl_project/build/CMakeFiles/rebuild_cache.dir

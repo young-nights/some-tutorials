@@ -1,0 +1,114 @@
+# https://www.scons.org/doc/HTML/scons-man.html#f-SetOption
+
+
+import os
+# 提供了Python解释器相关操作的访问，如获取命令行参数、退出程序、操作导入系统等
+import sys
+# 是一个交互式的源代码调试器，可以设置断点、单步执行、查看栈帧、检查变量等
+import pdb
+# 提供了多进程支持，可以创建和管理子进程，进行并行计算等
+import multiprocessing
+
+
+
+####################################################
+# ARGUMENTS: 用户传递的构建变量
+# COMMAND_LINE_TARGETS:  用户在命令行指定的目标
+# BUILD_TARGET: 实际要构建的目标
+# DEFAULT_TARGETS: 如果没有目标，SCons 会构建这些目标
+####################################################
+# 使用场景（例如）
+# 输入：
+#  scons app firmware -Q DEBUG=1
+# 输出：
+#  ARGUMENTS: {'DEBUG': '1'}
+#  COMMAND_LINE_TARGETS: ['app', 'firmware']
+#  BUILD_TARGET: ['app', 'firmware']
+#  DEFAULT_TARGETS: []
+# 解释：
+#  在这个例子中，用户通过命令行传递了一个名为 DEBUG 的变量，并指定了两个目标 app 和 firmware。
+#  些信息可以用于在 SCons 脚本中进行条件编译、选择构建目标等操作。
+#  通过这些变量，SCons 可以根据用户的输入来决定如何构建项目。
+#  这段代码用于打印 SCons 构建系统中的一些重要变量和参数，
+#  以便开发者可以了解当前构建的状态和配置。
+print("ARGUMENTS:", ARGUMENTS)
+print("COMMAND_LINE_TARGETS:", COMMAND_LINE_TARGETS)
+print("BUILD_TARGET:", BUILD_TARGET)
+print("DEFAULT_TARGETS:", DEFAULT_TARGETS)
+
+
+
+
+####################################################
+# AddOption(opt_str, ..., attr=value, ...)
+# AddOption() 函数用于添加命令行选项，允许用户在运行 SCons 时通过命令行传递参数
+
+# opt_str: 选项的字符串形式，通常以双破折号（--）开头
+# dest: 选项的目标名称，用于在 SCons 脚本中引用该选项
+# action: 选项的动作类型，通常是 'store_true' 或 'store' 等
+####################################################
+# 使用场景
+# 在嵌入式系统开发中，构建系统通常需要支持多种硬件板级配置。
+# 通过使用 --list-board 选项，用户可以方便地查看构建系统支持的所有硬件板级，
+# 而无需手动浏览配置文件或文档。这有助于用户选择正确的板级进行构建和开发
+AddOption(
+    "--list-board",
+    dest="list-board",
+    action="store_true",
+    default=False,
+    help="list all avaliabe board",
+)
+
+
+
+####################################################
+# 当 SetOption("help", True) 被执行时，SCons 会 立即打印帮助信息并退出，不会继续执行后续的构建逻辑
+# 它通常用于打印自定义帮助信息，或者在特定条件下（如用户输入错误时）主动显示帮助
+####################################################
+# 将help目标转为显示帮助
+if "help" in COMMAND_LINE_TARGETS:
+    SetOption("help", True)
+# 将clean目标转为清空编译
+if "clean" in COMMAND_LINE_TARGETS:
+    SetOption("clean", True)
+
+
+
+####################################################
+# 设置编译默认线程数，如果命令行会覆盖当前值
+
+# multiprocessing.cpu_count()
+# 动态检测当前计算机的 CPU 核心数（例如 4 核 CPU 返回 4，16 核返回 16）
+
+# SetOption("num_jobs", num_jobs)
+# SetOption() 函数用于设置 SCons 的选项，可以在 SCons 脚本中动态修改选项的值
+# "num_jobs": 选项的名称，通常用于指定并行构建的线程数
+# num_jobs: 选项的值，通常是一个整数，表示并行构建的线程数
+# 例如：scons --num_jobs=4
+####################################################
+# 详解：
+# 获取当前系统的 CPU 核心数
+num_jobs = multiprocessing.cpu_count()
+# 如果命令行中指定了 num_jobs 选项，则使用该值
+SetOption("num_jobs", num_jobs)
+
+
+
+
+####################################################
+# 列出所有支持的板子
+####################################################
+# 详解：
+# 检查用户是否通过 --list-board 选项触发功能
+if GetOption("list-board"):
+    print("-------------------------------------")
+    print("all avaliabe board:")
+    print("-------------------------------------")
+    # 递归遍历 bsps 目录下的所有子目录
+    for root, dirs, files in os.walk("bsps"):
+        # 判断目录是否包含 SConstruct 文件（标志这是一个有效的 BSP 目录）
+        if "SConstruct" in files:
+            print(root)
+    print("")
+    # 打印完信息后立即退出，避免执行后续编译流程
+    exit(0)
