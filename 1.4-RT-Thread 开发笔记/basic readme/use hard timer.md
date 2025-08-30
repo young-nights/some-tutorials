@@ -90,6 +90,8 @@ void TIM6_IRQHandler(void)
 ![添加中断函数以及回调函数](./images/hardtimer_image7.png)
 </font>
 
+6. 
+
 
 ## <font size=2>3.驱动代码</font>
 
