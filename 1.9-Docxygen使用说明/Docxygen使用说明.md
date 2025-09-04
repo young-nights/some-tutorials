@@ -32,10 +32,10 @@
 
 
 ```bash
-create_at：2025/06/10
-aliases：使用VSCode进行STM32的RT-Thread开发
+create_at：2025/09/05
+aliases：使用Docxygen归档编程文档
 ```
-# <span class="wathet"><font size=4>VScode 插件准备</font></span>
+# <span class="wathet"><font size=4>Docxygen下载与安装</font></span>
 
 
 ## <font size=3>VScode draw.io</font>
