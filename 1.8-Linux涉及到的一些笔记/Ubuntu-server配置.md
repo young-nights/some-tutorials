@@ -35,7 +35,9 @@
 ## <font size=3>一、软件安装</font>
 <font size=2>
 
-[Ubuntu-Server-ESP32安装步骤](Ubuntu-Server-ESP32安装步骤.md)
+[Ubuntu-Server-ESP32安装步骤](./Ubuntu-Server-ESP32安装步骤.md)
+[Ubuntu-Server-Git配置步骤](./Ubuntu-Server环境下配置Git.md)
+[Ubuntu-Server-OpenMV-Docker配置步骤](./)
 
 </font>
 
