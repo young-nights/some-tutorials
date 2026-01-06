@@ -32,12 +32,12 @@
 
 
 # <span class="wathet"><font size=4>Ubuntu初始软件配置与安装</font></span>
-## <font size=3>一、软件安装</font>
+## <font size=3>一、软件安装 & 环境配置</font>
 <font size=2>
 
 [Ubuntu-Server-ESP32安装步骤](./Ubuntu-Server-ESP32安装步骤.md)
 [Ubuntu-Server-Git配置步骤](./Ubuntu-Server环境下配置Git.md)
-[Ubuntu-Server-OpenMV-Docker配置步骤](./)
+[Ubuntu-Server-OpenMV-Docker配置步骤](./Ubuntu-Server-OpenMV开发环境搭建.md)
 
 </font>
 
@@ -163,8 +163,40 @@ dig cn.archive.ubuntu.com
 <span class="blue">5.重新尝试更新</span>
 
 
+### <font size=2>更换镜像源</font>
+
+<span class="blue">设置全局镜像源</span>
+
+```bash
+# 1. 备份源文件
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+
+# 2. 编辑 sources.list（用 nano 或 vim）
+sudo nano /etc/apt/sources.list
+
+# 3. 把所有 cn.archive.ubuntu.com 替换为清华大学镜像
+
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted universe multiverse
+
+
+# 其他可选中国镜像：
+# 阿里云：mirrors.aliyun.com/ubuntu/
+# 网易：mirrors.163.com/ubuntu/
+# 中科大：mirrors.ustc.edu.cn/ubuntu/
+
+# 4. 检查网络
+ping mirrors.tuna.tsinghua.edu.cn
+
+```
+![修改完成以后](./images/server-ip-config-4.png)
+
 
 </font>
+
+
 
 
 
