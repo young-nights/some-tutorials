@@ -87,7 +87,35 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-**3. 进入 Docker 目录并构建**
+**3. 修改配置文件**
+
+<div style="background:#bff3f0;padding:10px;border-radius:6px;color:#333;">
+虽然步骤2对Docker的镜像站进行了配置，但是实际操作过程中，在拉去OpenMV的子模块代码时，依旧出现了网络问题导致的无法拉取成功的情况。因此，修改 openmv 文件中的 .gitmodules 文件，修改拉取的地址。
+</div>
+
+- <span class="blue">原本的.gitmodules文件内容</span>
+
+![内容1](./images/images-docker-config-6.png)
+
+- <span class="blue">把.gitmodules中的要拉取的仓库镜像到gitee上</span>
+```bash
+步骤 1️⃣：登录 Gitee
+打开 https://gitee.com，登录你的账号
+
+步骤 2️⃣：新建仓库 → 选择“导入仓库”
+  1.点击右上角 ➕ 新建仓库
+  2.选择 “从 GitHub / GitLab 导入”
+
+步骤 3️⃣：填写 GitHub 仓库地址
+
+步骤 4️⃣：创建
+```
+
+- <span class="blue">修改后的.gitmodules文件内容</span>
+
+![内容2](./images/images-docker-config-7.png)
+
+**4. 进入 Docker 目录并构建**
 
 <spam class="red">这里要使用docker内部构建的编译器，就必须使用进入到docker文件夹中的make进行构建</span>
 
@@ -102,7 +130,7 @@ sudo systemctl restart docker
 
 
 
-<spam class="red">必须在 OpenMV 仓库的 boards/ 文件夹中添加自定义板子配置，才能使用 Docker 构建方式（make TARGET= 板型）来编译固件</span>
+<spam class="red">必须在 OpenMV 仓库的 boards/ 文件夹中修改自定义板子配置（只能在源文件的基础上修改），才能使用 Docker 构建方式（make TARGET= 板型）来编译固件</span>
 
 - OpenMV 的构建系统（Makefile 和 ports/stm32 的配置）会自动扫描根目录下的 boards/ 文件夹，寻找子文件夹作为支持的板型（TARGET）;
 - 每个官方板型（如 OPENMV4、OPENMV4P、OPENMV_N6 等）都是 boards/ 下的一个独立子文件夹，里面包含：
@@ -110,7 +138,6 @@ sudo systemctl restart docker
   (2) mpconfigboard. mk（构建选项，如引脚定义、闪存布局等）;
   (3) omv_boardconfig.h（OpenMV 特定硬件配置，如传感器引脚、LED、存储等）;
   (4) 有时还有其他文件如 README 或特定脚本;
-- 当运行 make TARGET=MYBOARD 时，构建脚本会将 boards/MYBOARD 作为 BOARD_DIR 使用。如果你的板子配置不在这个文件夹下，构建系统根本找不到它，无法设置正确的 TARGET.
 
 ```bash
 cd ~/openmv/docker
@@ -139,38 +166,16 @@ make TARGET=OPENMV4 #针对H7
 | OPENMV_RT1020 | OpenMV RT1020 | NXP i.MX RT1020 |
 
 </div>
+</font>
 
-<br>
 
-**4. 自定义板级包的创建与编译**
 
-<span class="blue">1. 复制一个最相似的官方板子作为模板</span>
 
-```bash
-# 在 openmv 仓库外面创建一个文件夹
-mkdir ~/my_openmv_boards
-cp -r ~/openmv/boards/OPENMV4 ~/my_openmv_boards/MY_OPENMV_H7
-```
 
-<span class="blue">2. 修改配置（进入这个新文件夹，修改以下关键文件）</span>
 
-```bash
-cd ~/my_openmv_boards/MY_OPENMV_H7
-nano omv_boardconfig.h     # 修改传感器 DCMI 引脚、LED、存储等
-nano mpconfigboard.h       # MicroPython 板级配置
-nano mpconfigboard.mk      # 编译选项、闪存分区等
-# 根据你的硬件差异修改对应内容
-```
+## <font size=3>二、Linux Create self-docker for openmv to build</font>
+<font size=2>
 
-<span class="blue">3. 使用 Docker 构建（关键：用 GENERIC 作为 TARGET）</span>
-
-```bash
-cd ~/openmv/docker
-# 正确方式：指定外部 BOARD 目录
-make TARGET=GENERIC BOARD=~/my_openmv_boards/MY_OPENMV_H7
-# 或者用相对路径（假设你当前在 openmv 根目录）
-make TARGET=GENERIC BOARD=../my_openmv_boards/MY_OPENMV_H7
-```
 
 
 </font>

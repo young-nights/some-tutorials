@@ -186,6 +186,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted 
 # 阿里云：mirrors.aliyun.com/ubuntu/
 # 网易：mirrors.163.com/ubuntu/
 # 中科大：mirrors.ustc.edu.cn/ubuntu/
+# Ubuntu官方：http://cn.archive.ubuntu.com/ubuntu 
 
 # 4. 检查网络
 ping mirrors.tuna.tsinghua.edu.cn
