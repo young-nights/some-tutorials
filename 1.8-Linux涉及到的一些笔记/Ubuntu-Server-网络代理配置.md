@@ -29,11 +29,13 @@
 </style>
 
 
-# <span class="wathet"><font size=4>Linux 下创建自己的容器 </font></span>
-<font size=3>
+# <span class="wathet"><font size=4>Ubuntu-Server-网络代理配置</font></span>
+## <font size=3>桥接模式，但在 Ubuntu 里单独配置代理</font>
 
 
-</font>
+
+
+
 
 
 

@@ -304,3 +304,78 @@ idf.py -p /dev/ttyACM0 monitor
 
 </font>
 
+
+
+
+## <font size=3>上传ESP32的Docker镜像到DockerHub</font>
+
+<font size=2>
+
+### <font size=2>1. 登录Docker Hub </font>
+
+- 打开浏览器访问 https://hub.docker.com/
+- 如果没有账号，点击 Sign Up 注册（用邮箱或 GitHub 登录）
+- 注册/登录后，记下你的 Docker ID（通常是你注册的用户名）
+
+### <font size=2>2. 在 Docker Hub 创建仓库 </font>
+
+- 登录后，点击右上角 Create Repository（或左侧菜单 Repositories → Create）
+- epository name：填一个名字，例如 esp32-image（建议用小写、连字符）
+- Visibility：选 Public（免费无限公开仓库）或 Private（免费有数量限制）
+- 点击 Create 创建仓库
+- 创建后，页面会显示类似提示命令：
+```bash
+docker tag <local-image> <your-username>/esp32-image:latest
+docker push <your-username>/esp32-image:latest
+```
+
+### <font size=2>3. 在本地登录 Docker Hub (Ubuntu主机执行) </font>
+
+```bash
+docker login
+
+# 输入你的 Docker ID（用户名）和 密码（或个人访问令牌，如果启用了 2FA）
+# 成功后显示：Login Succeeded
+
+```
+
+### <font size=2>4. 为镜像打标签（Tag） </font>
+
+假设本地镜像是 nights-esp32-idf:v5.2，需要改成 Docker Hub 格式：`<你的用户名>/<仓库名>:<标签>`
+
+```bash
+# 示例：假设你的 Docker ID 是 nights，仓库名是 esp32-idf-dev
+docker tag nights-esp32-idf:v5.2 nights/esp32-idf-dev:v5.2
+
+# 同时打一个 latest 标签（可选，但常用）
+docker tag nights-esp32-idf:v5.2 nights/esp32-idf-dev:latest
+```
+验证：运行 `docker images`，你会看到新标签的镜像:
+
+```text
+REPOSITORY                  TAG       IMAGE ID       CREATED        SIZE
+nights/esp32-idf-dev        v5.2      abc123def      5 minutes ago  1.2GB
+nights-esp32-idf            v5.2      abc123def      10 minutes ago 1.2GB
+```
+
+### <font size=2>5. 上传镜像（Push） </font>
+
+```bash
+# 推送特定版本
+docker push nights/esp32-idf-dev:v5.2
+
+# 同时推送 latest（如果打了）
+docker push nights/esp32-idf-dev:latest
+```
+
+- 推送过程会显示进度条（可能几分钟到十几分钟，取决于镜像大小和网络）
+- 成功后显示类似：`latest: digest: sha256:abc... size: 1234`
+
+
+### <font size=2>6. 验证上传</font>
+
+回到浏览器 Docker Hub 页面，刷新仓库，如果看到Tags列表中有V5.2就代表成功了。
+
+
+</font>
+
