@@ -31,7 +31,7 @@
 
 
 # <span class="wathet"><font size=4>基于STM32H750VBT6的OpenMV固件烧录方法</font></span>
-## <font size=3>一、OpenMV-Version1.0 版本的固件烧录方式</font>
+## <font size=3>一、OpenMV-STM32H7系列固件烧录</font>
 <font size=2>
 <div style="background:#e8f5e8;padding:10px;border-radius:6px;color:#333;">
 ℹ️ 硬件电路详见立创EDA工程 <span class="red">"OpenMV4_STM32H705VBT6"</span>。
@@ -47,14 +47,17 @@
 检查一下板子的焊接特别时type-c接口。
 
 
-
-
 </font>
 
 
 
 
+## <font size=3>一、OpenMV-ESP32系列固件烧录</font>
+<font size=2>
 
+
+
+</font>
 
 
 
