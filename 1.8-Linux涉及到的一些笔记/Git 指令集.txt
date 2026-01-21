@@ -62,13 +62,13 @@ Hi 用户名! You've successfully authenticated, but GITEE.COM does not provide she
 (2) git status		// 查看缓冲区状态
 (3) git remote add origin git@gitee.com:mr_nights/esp32-item.git 
 (4) git commit -m "Initial Commit"
-(5) git push -u origin master
+(5) git push -u origin main
 
 
 如果确定本地的更改是正确的，并且不需要远程仓库的更改，可以使用强制推送：
-git push --force -u origin master
+git push --force -u origin main
 
 拉取远程仓库的最新更改
-git pull origin master
+git pull origin main
 
 

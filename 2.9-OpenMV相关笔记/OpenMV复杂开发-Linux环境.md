@@ -115,6 +115,13 @@ sudo systemctl restart docker
 
 ![内容2](./images/images-docker-config-7.png)
 
+```bash
+
+
+
+```
+
+
 **4. 进入 Docker 目录并构建**
 
 <spam class="red">这里要使用docker内部构建的编译器，就必须使用进入到docker文件夹中的make进行构建</span>
@@ -141,6 +148,10 @@ sudo systemctl restart docker
 
 ```bash
 cd ~/openmv/docker
+# 先构建镜像
+docker build -t openmv-builder:latest -f Dockerfile .
+# 如果已经构建就启动镜像
+docker run --rm -it openmv-builder:latest bash
 # make TARGET=<你的板型>
 make TARGET=OPENMV4 #针对H7
 ```
