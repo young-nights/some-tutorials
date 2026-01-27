@@ -222,6 +222,28 @@ tree -d -L 2 self-openmv
 
 ### - <span class="blue"><font size=2>代码裁剪<font></span>
 
+<div style="background:#e9d5ff;padding:10px;border-radius:6px;color:#333;">
+
+
+
+
+
+
+
+</div>
+
+
+
+
+### - <span class="blue"><font size=2>自定义板子代码移植<font></span>
+
+<div style="background:#e9d5ff;padding:10px;border-radius:6px;color:#333;">
+
+
+</div>
+
+
+
 
 </font>
 
