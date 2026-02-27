@@ -118,8 +118,30 @@ chmod +x docker-setup.sh
 ./docker-setup.sh
 ```
 
+![onboard面板](./images/openclaw-config-1.png)
 
+### 1. 等待部署完成，进入onbaord配置
+**<span class="red">这里选择Yes</span>**
+![onboard配置1](./images/openclaw-config-2.png)
 
+**<span class="red">重新进入 onboarding 界面</span>**
+```bash
+# 在配置过程中如果不小心退出了 onboarding 界面，输入以下命令，重新启动 onboarding
+# --rm          ：跑完自动清理临时容器（干净）
+# openclaw-cli  ：这是 docker-compose.yml 里定义的 CLI 服务名，用于跑 openclaw 命令
+# onboard       ：就是 onboarding wizard 的子命令
+docker compose run --rm openclaw-cli onboard
+
+```
+
+**<span class="red">选择QuickStart（快速开始）</span>**
+![onboarding 配置2](./images/openclaw-config-3.png)
+
+**<span class="red">选择大模型（推荐使用minimax）</span>**
+![onboarding 配置3](./images/openclaw-config-4.png)
+
+**<span class="red">选择连接的设备用于对话</span>**
+![onboarding 配置4](./images/openclaw-config-5.png)
 
 
 </font>
