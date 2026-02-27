@@ -116,9 +116,22 @@ sudo systemctl restart docker
 ![内容2](./images/images-docker-config-7.png)
 
 ```bash
-
-
-
+[submodule "src/micropython"]
+	path = lib/micropython
+	url = https://github.com/openmv/micropython.git
+	branch = openmv
+[submodule "src/omv/modules/ulab"]
+	path = modules/ulab
+	url = https://github.com/v923z/micropython-ulab.git
+[submodule "src/lib/tflm/libtflm"]
+	path = lib/tflm/libtflm
+	url = https://github.com/openmv/libtflm.git
+[submodule "src/lib/tinyusb"]
+	path = lib/tinyusb
+	url = https://github.com/hathach/tinyusb
+[submodule "tools/alif"]
+	path = tools/alif
+	url = https://github.com/micropython/alif-security-toolkit.git
 ```
 
 
@@ -181,7 +194,7 @@ make TARGET=OPENMV4 #针对H7
 <br>
 </font>
 
-
+---
 
 
 ## <font size=3>二、构建自己的docker容器</font>

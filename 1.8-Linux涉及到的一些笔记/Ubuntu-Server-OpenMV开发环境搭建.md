@@ -115,6 +115,26 @@ sudo systemctl restart docker
 
 ![内容2](./images/images-docker-config-7.png)
 
+```bash
+[submodule "src/micropython"]
+	path = lib/micropython
+	url = https://github.com/openmv/micropython.git
+	branch = openmv
+[submodule "src/omv/modules/ulab"]
+	path = modules/ulab
+	url = https://github.com/v923z/micropython-ulab.git
+[submodule "src/lib/tflm/libtflm"]
+	path = lib/tflm/libtflm
+	url = https://github.com/openmv/libtflm.git
+[submodule "src/lib/tinyusb"]
+	path = lib/tinyusb
+	url = https://github.com/hathach/tinyusb
+[submodule "tools/alif"]
+	path = tools/alif
+	url = https://github.com/micropython/alif-security-toolkit.git
+```
+
+
 **4. 进入 Docker 目录并构建**
 
 <spam class="red">这里要使用docker内部构建的编译器，就必须使用进入到docker文件夹中的make进行构建</span>
@@ -141,9 +161,14 @@ sudo systemctl restart docker
 
 ```bash
 cd ~/openmv/docker
+# 先构建镜像
+docker build -t openmv-builder:latest -f Dockerfile .
+# 如果已经构建就启动镜像(这一步可忽略)
+docker run --rm -it openmv-builder:latest bash
 # make TARGET=<你的板型>
 make TARGET=OPENMV4 #针对H7
 ```
+
 
 <div style="background:#e8f5e8;padding:10px;border-radius:6px;color:#333;">
 ℹ️ TARGET 参数：指定你的 OpenMV 相机型号。常见选项（查看仓库 src/omv/boards/ 目录确认最新）：<br>
@@ -173,13 +198,65 @@ make TARGET=OPENMV4 #针对H7
 ---
 
 
-## <font size=3>二、Linux Create self-docker for openmv to build</font>
+## <font size=3>二、构建自己的docker容器</font>
 <font size=2>
+<div style="background:#e8f5e8;padding:10px;border-radius:6px;color:#333;">
+在配置自己的OpenMV的开发环境之前，对于Ubuntu-Server-20.04.6版本需要先进行一些准备配置：
+
+1. 参考[Ubuntu-Server-网络代理配置](https://github.com/young-nights/some-tutorials/blob/main/1.8-Linux%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/Ubuntu-Server-%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE.md),先把Ubuntu-Server的VPN网络配置好，方便从Github等墙外网站拉取代码；
+
+2. 参考上文中对于docker镜像源的配置，把镜像网站地址的配置文件编辑好，对代码拉取进行一个兜底；
+
+3. 在自己的Github仓库中Fork官方的OpenMV的源码，稍后配置时需要用到；
+
+</div>
+
+### - <span class="blue"><font size=2>准备工作<font></span>
+
+**1. Fork官方的openmv源码到自己的Github仓库**
+
+![openmv源码克隆](./images/openmv-cfg-1.png)
+
+**<span class="green">注意：克隆下来的源码中有一些子模块是没有被一起跟着克隆到本地的，因此需要在.gitmodules中进行配置拉取</span>**
 
 
+**2. 在Ubuntu-Server-20.04.6的环境中拉取fork的源码**
+
+
+**<span class="green">注意：必须使用git clone ssh进行克隆，使用HTTP下载到本地不存在.git文件，这样后面的.gitmodules无法正常拉取子模块</span>**
+```bash
+# 这里按需改成自己的仓库地址
+git clone git@github.com:young-nights/openmv-firmware.git
+
+# tree 查看克隆的目录
+tree -d -L 2 self-openmv
+```
+![openmv源码克隆](./images/openmv-cfg-2.png)
+
+
+### - <span class="blue"><font size=2>代码裁剪<font></span>
+
+<div style="background:#e9d5ff;padding:10px;border-radius:6px;color:#333;">
+
+
+
+
+
+
+
+</div>
+
+
+
+
+### - <span class="blue"><font size=2>自定义板子代码移植<font></span>
+
+<div style="background:#e9d5ff;padding:10px;border-radius:6px;color:#333;">
+
+
+</div>
 
 
 
 
 </font>
-
