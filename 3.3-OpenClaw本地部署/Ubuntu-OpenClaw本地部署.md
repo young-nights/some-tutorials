@@ -266,9 +266,9 @@ command sync failed: HttpError: Network request for 'setMyCommands' failed!
 curl -v https://api.telegram.org/bot<你的TOKEN>/getMe
 # 替换 <你的TOKEN> 为实际 bot token，比如 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
 
-# 实际我的bot token
-# 85852318862：AAFwNGYJJVRW8LnfG8LM4do2VIYrN8N4OjM
-curl -v https://api.telegram.org/bot8065490331:AAFcEX8_dTaFKXklE6kbzWJLBjn53rD1aSc/getMe
+# 假设我的bot token
+# 85852318862：AAFwNGYJJVRW8LnfG8LM4do2
+curl -v https://api.telegram.org/bot85852318862：AAFwNGYJJVRW8LnfG8LM4do2/getMe
 ```
 
 ![连接测试](./images/openclaw-config-9.png)
