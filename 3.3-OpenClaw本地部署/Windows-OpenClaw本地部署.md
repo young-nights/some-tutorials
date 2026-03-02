@@ -97,6 +97,9 @@ docker compose exec openclaw-gateway ls -la /home/node/pictures
 
 # 如果想看前几个文件示例
 docker compose exec openclaw-gateway ls /home/node/pictures | head -n 10
+
+# 如果路径映射设置错误，使用指令取消
+Remove-Item Env:OPENCLAW_EXTRA_MOUNTS -ErrorAction SilentlyContinue
 ```
 
 3. 运行 docker-setup.sh
@@ -108,8 +111,93 @@ bash ./docker-setup.sh
 # 或者直接（如果已安装 Git Bash 或 WSL）
 ./docker-setup.sh
 ```
+<div style="background:#ffcc99;padding:10px;border-radius:6px;color:#333;">
 
-4. 验证配置是否有效
+**<span class="red">报错： 此处运行  bash ./docker-setup.sh 会出现报错</span>**
+
+![运行报错](./images/openclaw-widnows-1.png)
+
+```bash
+# 1. 在Powershell中执行查看默认发行版本
+wsl --list --verbose
+```
+![执行结果](./images/openclaw-widnows-2.png)
+
+```text
+分析报错原因：
+(1) docker-desktop 是 Docker Desktop 自动创建的极简 WSL 发行版（基于轻量工具链，比如 busybox 或 scratch 风格），它故意没有安装 /bin/bash（或其他完整 shell），目的是只跑 Docker 引擎的后端，不用于交互。
+(2) Windows 把这个 docker-desktop 设成了默认 WSL distro（星号 * 表示默认）
+(3) 任何时候你运行 bash、wsl（无参数）、或某些工具（如 OpenClaw/clawdock 的脚本）试图启动 bash 时，WSL relay 层就会去调用默认 distro 的 /bin/bash → 不存在 → 报错.
+```
+
+**<span class="green">解决问题方法：</span>**
+
+```bash
+# 1. 先检查/安装一个正常的 Ubuntu distro（如果已经有了就跳过安装）
+wsl --install -d Ubuntu
+# 这会从 Microsoft Store 下载并安装最新的 Ubuntu
+# 安装完后，它会自动启动一次，让你设置用户名和密码
+
+# 2. 把 Ubuntu 设置成默认
+wsl --set-default Ubuntu
+
+# 3. 启动 wsl中的 Ubuntu
+wsl -d Ubuntu
+# 4. 查看版本信息
+lsb_release -a
+
+# 5. 再次运行 bash ./docker_setup.sh
+bash ./docker_setup.sh 
+```
+
+**<span class="red">Docker Compose not available 报错</span>**
+
+![执行结果](./images/openclaw-widnows-3.png)
+
+```text
+问题分析：
+OpenClaw 的 docker-setup.sh 脚本在检查 Docker Compose 时，用的是旧语法 docker-compose（V1 版本）。
+但现代 Docker Desktop（4.10+ 以后，默认启用 Compose V2）用的是插件形式：命令是 docker compose（无连字符），而不是 docker-compose。
+所以脚本检测不到旧的 docker-compose 命令 → 报错退出。
+
+解决方案（在WSL Ubuntu 里操作）：
+setp1：先确认 Docker Desktop 已运行，且 WSL 集成已开启（Docker Desktop → Settings → Resources → WSL Integration → 勾选你的 Ubuntu）
+step2：重启 Docker Desktop
+```
+![step1](./images/openclaw-widnows-4.png)
+
+
+
+
+**<span class="red">wsl代理网络问题</span>**
+
+wsl: 检测到 localhost 代理配置，但未镜像到 WSL。NAT 模式下的 WSL 不支持 localhost 代理。
+```text
+原因分析:
+由于 Windows 主机开启了本地代理（localhost 代理，比如 Clash、V2Ray、Shadowsocks 等工具设置的系统代理，通常是 127.0.0.1:1080/7890 等端口），WSL 默认用 NAT 网络模式，localhost (127.0.0.1) 在 Windows 和 WSL 之间不互通，所以 WSL 无法自动使用 Windows 的代理。
+
+修复方式：
+在 Windows 用户目录下创建或编辑 .wslconfig 文件，路径：C:\Users\你的用户名\.wslconfig，然后在 .wslconfig 中填写以下内容并保存
+
+[experimental]
+autoMemoryReclaim=gradual
+networkingMode=mirrored
+dnsTunneling=true
+firewall=true
+autoProxy=true
+
+保存后，在 PowerShell（管理员）运行：
+
+wsl --shutdown
+
+之后，再次打开wsl，或者 bash，警告就会消除
+
+```
+
+</div>
+
+
+1. 验证配置是否有效
 
 ```bash
 # 1. 检查 apt 包是否安装成功 
@@ -138,3 +226,5 @@ Sandbox 模式使用 Docker 容器隔离代理工具（如 exec、read、write�
 </font>
 </div>
 
+
+sk-tziH8ddIWrvxfxmIspvjcET6g7ojV7dso5fZarS1ARY2uSSm
