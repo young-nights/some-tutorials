@@ -52,6 +52,44 @@ OpenClaw 的核心卖点就是“能够操作电脑文件、跑命令、整理�
 - **Windows特定注意：** Docker Desktop 会自动处理路径映射，但 Windows 路径使用反斜杠（\），在 Docker Compose 中需转换为正斜杠（/）。如果使用 WSL2，确保 WSL2 已启用（在 PowerShell 中运行 wsl --install）
 - **权限：** 以管理员身份运行命令提示符或 PowerShell
 
+```bash
+# 1. 查看已安装的 WSL 发行版
+wsl --list --verbose
+
+# 2. 查看可安装的发行版列表
+wsl --list --online
+
+# 3.  删除 WSL 虚拟机
+# 3.1 先关闭 WSL
+wsl --shutdown
+
+# 3.2 卸载（删除）指定发行版
+wsl --unregister Ubuntu-22.04
+
+# 4.  查看可用的 Ubuntu 版本
+wsl --list --online
+
+# 4.1 安装特定版本（例如 Ubuntu 22.04）
+wsl --install -d Ubuntu-22.04
+
+# 5. 设置Ubuntu为默认打开
+wsl --setdefault Ubuntu-22.04
+
+# 6.  更新系统并安装基础依赖
+sudo apt update && sudo apt install -y curl git wget
+
+# 7.  安装 Node.js 22（必须此版本）
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# 7.1 验证安装
+node -v    # 应显示 v22.x
+npm -v
+
+# 9. 下载openclaw源码
+```
+
+
 ### **<span class="wathet"><font size=2> Step1：克隆 OpenClaw 仓库**</font></span>
 
 1. 打开 PowerShell 或 命令提示符
