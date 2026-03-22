@@ -107,6 +107,9 @@ git clone https://github.com/openclaw/openclaw
 
 # 2. 进入仓库目录
 cd openclaw
+
+# 3. 查询可用版本
+
 ```
 
 ### **<span class="wathet"><font size=2> Step2：设置 Docker 脚本**</font></span>
@@ -115,10 +118,7 @@ OpenClaw 提供了一个脚本 `docker-setup.sh` 来自动化构建和启动 Doc
 1. 运行 docker-setup.sh
 
 ```bash
-# 进入到
-./docker-setup.sh
-
-# 或者直接（如果已安装 Git Bash 或 WSL）
+# 进入到openclaw文件夹
 ./docker-setup.sh
 ```
 <div style="background:#ffcc99;padding:10px;border-radius:6px;color:#333;">
@@ -160,8 +160,8 @@ wsl -d Ubuntu-22.04
 # 4. 查看版本信息
 lsb_release -a
 
-# 5. 再次运行 bash ./docker_setup.sh
-bash ./docker_setup.sh 
+# 5. 再次运行 ./docker_setup.sh
+./docker_setup.sh 
 ```
 
 **<span class="red">Docker Compose not available 报错</span>**
@@ -229,6 +229,24 @@ Sandbox 模式使用 Docker 容器隔离代理工具（如 exec、read、write�
 
 
 
+### **<span class="wathet"><font size=2> Step5：网络绑定到localhost本地网络**</font></span>
+
+```bash
+# 修改docker-compose.yaml文件
+# "主机IP:主机端口:容器端口"
+
+- "127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+- "127.0.0.1:${OPENCLAW_BRIDGE_PORT:-18790}:18790"
+
+# 实际效果
+┌─────────────────┐         ┌─────────────────┐
+│     宿主机      │  ←────  │    容器内部     │
+│  127.0.0.1:18789 │ ──────→│     :18789      │  (Gateway服务)
+│  127.0.0.1:18790 │ ──────→│     :18790      │  (Bridge服务)
+└─────────────────┘         └─────────────────┘
+
+```
+![端口映射&地址绑定](./images/openclaw-widnows-6.png)
 
 
 </font>
@@ -250,6 +268,13 @@ ClawMetry 是专为 OpenClaw 设计的开源实时监控面板。
 # 安装
 pip install clawmetry
 
+# 檢查 clawmetry 是否真的裝好
+ls ~/.local/bin/clawmetry
+
+# 把 ~/.local/bin 加到 PATH
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
 # 启动（自动打开 localhost:8900）
 clawmetry
 ```
@@ -257,3 +282,161 @@ clawmetry
 
 </font>
 
+
+
+
+## <span class="wathet"><font size=3> 单openclaw，多agnet部署 </font></span>
+
+### **<span class="wathet"><font size=2>部署新智能体**</font></span>
+
+<font size=2> 
+
+```bash
+
+# 全局安裝 openclaw CLI
+curl -fsSL https://openclaw.ai/install.sh | bash
+
+# 重启终端
+source ~/.bashrc
+
+# 验证是否安装完成
+openclaw --version
+
+# 方式一：创建一个新 agent，叫 "coder-agent"，用 Ollama 模型
+openclaw agents add coder-agent --model ollama/qwen3-coder:30b --workspace ~/.openclaw/agents/coder-agent-workspace # 独立工作区，防止冲突
+
+# 方式二：如果想交互式创建（会问你一些问题，包括初始 identity）
+openclaw agents add coder-agent
+
+```
+
+### **<span class="wathet"><font size=2>删除子agent**</font></span>
+
+```bash
+# 先列出所有 agent 确认名称/ID（比如你新建的是 coder-agent）
+openclaw agents list
+
+# 删除指定 agent（替换成你的 agent ID/名称，例如 coder-agent）
+openclaw agents delete coder-agent
+
+# 如果想强制删除（跳过确认提示）
+openclaw agents delete coder-agent --force
+
+```
+
+</font>
+
+
+
+## <span class="wathet"><font size=3> 接入Windows本地Ollama </font></span>
+
+<font size=2> 
+
+```bash
+# 先列出所有 agent 和它们的模型配置（带 verbose 看细节）
+openclaw agents list --verbose
+
+# 用 models 命令检查 Ollama provider 和可用模型列表
+openclaw models list --local          # 只看本地模型，应该看到 ollama/ 开头的
+openclaw models list --all            # 看全部，包括 Ollama 的
+openclaw models status                # 快捷看当前 gateway 连接的模型状态
+
+# 查看ollama是否连通
+curl http://host.docker.internal:11434
+```
+
+</font>
+
+
+
+
+
+## <font size=3> 自定义部署openclaw实例需要修改的文件 </font>
+
+### **<font size=2>修改 docker-compose.yaml**</font>
+
+<font size=2> 
+
+```bash
+# 1. 网络地址与映射端口的修改
+# 原文
+ports:
+  - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+  - "${OPENCLAW_BRIDGE_PORT:-18790}:18790"
+
+# 修改后
+ports:
+  - "127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+  - "127.0.0.1:${OPENCLAW_BRIDGE_PORT:-18790}:18790"
+```
+
+![修改网络与端口映射](./images/openclaw-widnows-6.png)
+
+```bash
+# 2. Windows下的K盘挂载的修改
+# 原文
+
+# 修改后
+
+```
+
+
+
+### **<font size=2>修改 `setup.sh`**</font>
+
+```bash
+# 1. 更改 docker images 的名称
+# 原文
+IMAGE_NAME="${OPENCLAW_IMAGE:-openclaw:local}"
+# 修改后
+IMAGE_NAME="${OPENCLAW_IMAGE:-openclaw-supervisor:box}"
+```
+
+![修改容器名称](./images/openclaw-widnows-9.png)
+
+```bash
+# 2. 更改 docker images 的名称以满足判断要求
+# 原文
+if [[ "$IMAGE_NAME" == "openclaw:local" ]]; then
+# 修改后
+if [[ "$IMAGE_NAME" == "openclaw-supervisor:box" ]]; then
+```
+
+![修改判断名称](./images/openclaw-widnows-10.png)
+
+```bash
+# 3. 修改工作路径和配置存放路径
+# 原文
+OPENCLAW_CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$HOME/.openclaw}"
+OPENCLAW_WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-$HOME/workspace}"
+
+
+# 修改后
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 默认路径放在项目目录下的 data/ 文件夹
+OPENCLAW_CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$SCRIPT_DIR/../../../openclaw_supervisor_data/.openclaw}"
+OPENCLAW_WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-$SCRIPT_DIR/../../../openclaw_supervisor_data/workspace}"
+
+# 创建目录
+mkdir -p "$OPENCLAW_CONFIG_DIR" "$OPENCLAW_WORKSPACE_DIR"
+
+echo "Config dir: $OPENCLAW_CONFIG_DIR"
+echo "Workspace dir: $OPENCLAW_WORKSPACE_DIR"
+```
+
+![修改判断名称](./images/openclaw-widnows-11.png)
+
+
+
+
+### **<font size=2>添加权限**</font>
+
+```bash
+# 1. 
+sudo usermod -aG docker $USER
+```
+
+
+</font>
