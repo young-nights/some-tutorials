@@ -349,6 +349,17 @@ curl http://host.docker.internal:11434
 
 
 
+## <span class="wathet"><font size=3> 在 WSL + Ubuntu 中部署 Ollama </font></span>
+
+<font size=2> 
+
+```bash
+
+```
+
+</font>
+
+
 
 
 ## <font size=3> 自定义部署openclaw实例需要修改的文件 </font>
@@ -382,61 +393,100 @@ ports:
 
 
 
-### **<font size=2>修改 `setup.sh`**</font>
-
-```bash
-# 1. 更改 docker images 的名称
-# 原文
-IMAGE_NAME="${OPENCLAW_IMAGE:-openclaw:local}"
-# 修改后
-IMAGE_NAME="${OPENCLAW_IMAGE:-openclaw-supervisor:box}"
-```
-
-![修改容器名称](./images/openclaw-widnows-9.png)
-
-```bash
-# 2. 更改 docker images 的名称以满足判断要求
-# 原文
-if [[ "$IMAGE_NAME" == "openclaw:local" ]]; then
-# 修改后
-if [[ "$IMAGE_NAME" == "openclaw-supervisor:box" ]]; then
-```
-
-![修改判断名称](./images/openclaw-widnows-10.png)
-
-```bash
-# 3. 修改工作路径和配置存放路径
-# 原文
-OPENCLAW_CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$HOME/.openclaw}"
-OPENCLAW_WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-$HOME/workspace}"
-
-
-# 修改后
-# 获取脚本所在目录
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# 默认路径放在项目目录下的 data/ 文件夹
-OPENCLAW_CONFIG_DIR="${OPENCLAW_CONFIG_DIR:-$SCRIPT_DIR/../../../openclaw_supervisor_data/.openclaw}"
-OPENCLAW_WORKSPACE_DIR="${OPENCLAW_WORKSPACE_DIR:-$SCRIPT_DIR/../../../openclaw_supervisor_data/workspace}"
-
-# 创建目录
-mkdir -p "$OPENCLAW_CONFIG_DIR" "$OPENCLAW_WORKSPACE_DIR"
-
-echo "Config dir: $OPENCLAW_CONFIG_DIR"
-echo "Workspace dir: $OPENCLAW_WORKSPACE_DIR"
-```
-
-![修改判断名称](./images/openclaw-widnows-11.png)
-
-
-
-
 ### **<font size=2>添加权限**</font>
 
 ```bash
 # 1. 
 sudo usermod -aG docker $USER
+
+# 2. 查看用户权限
+id
+
+# 3.  直接进入docker容器的node用户
+docker exec -it openclaw-openclaw-gateway-1 bash
+
+# 3.1 退出docker容器的node用户
+exit
+
+# 给目录更宽松的权限（让 node 用户能读写）
+sudo chmod -R 755 ~/.openclaw
+sudo chmod -R 644 ~/.openclaw/*.json ~/.openclaw/**/*.md 2>/dev/null || true
+
+# 在 /etc 路径下找到 wsl.conf 文件，加上下面这段
+[automount]
+enabled = true
+options = "metadata,uid=1000,gid=1000,umask=022"
+
+
+
 ```
 
 
 </font>
+
+
+
+
+## <span class="wathet"><font size=3> 接入WhatsApp </font></span>
+
+<font size=2> 
+
+```bash
+# 在 openclaw-gateway: 下面加
+dns:
+  - 8.8.8.8
+  - 1.1.1.1
+```
+
+</font>
+
+
+
+
+
+## <span class="wathet"><font size=3> 打开 openclaw-control-center 面板 </font></span>
+
+<font size=2> 
+
+```bash
+# 进入到源码所在路径
+cd ~/.openclaw/workspace/tools/openclaw-control-center
+npm run dev:ui
+
+http://127.0.0.1:4320
+
+```
+
+</font>
+
+
+
+## <span class="wathet"><font size=3> 安装 Obsidian </font></span>
+
+<font size=2> 
+
+```bash
+# 1. 更新系统
+sudo apt update && sudo apt upgrade -y
+
+# 2. 安装必要依赖
+sudo apt install -y libnotify4 libnss3 libsecret-1-0 libgbm1 libasound2 xdg-utils
+
+# 3. 下载并安装最新 Obsidian（.deb 包）
+wget $(curl -s https://obsidian.md/download | grep -o 'https://github.com/obsidianmd/obsidian-releases/releases/download/v[0-9.]\+/obsidian_[0-9.]\+_amd64\.deb' | head -n 1)
+
+# 4. 安装
+sudo dpkg -i obsidian_*.deb
+
+# 5. 如果提示依赖问题，修复它
+sudo apt --fix-broken install -y
+
+# 6. 开启
+obsidian
+
+# 7. .openclaw文件对于 obsidian 隐藏，使用指令将文件夹软连接可视化路径
+ln -sfn .openclaw openclaw-visible
+```
+
+</font>
+

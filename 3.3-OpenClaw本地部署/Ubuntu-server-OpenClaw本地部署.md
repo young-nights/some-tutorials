@@ -269,6 +269,9 @@ curl -v https://api.telegram.org/bot<你的TOKEN>/getMe
 # 假设我的bot token
 # 85852318862：AAFwNGYJJVRW8LnfG8LM4do2
 curl -v https://api.telegram.org/bot85852318862：AAFwNGYJJVRW8LnfG8LM4do2/getMe
+
+curl -v https://api.telegram.org/bot8791144257:AAFnHgvbhrGNt69clM-mm8_yfhyyW0IYkoo/getMe
+
 ```
 
 ![连接测试](./images/openclaw-config-9.png)
